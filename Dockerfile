@@ -1,8 +1,9 @@
-FROM openjdk:8-jdk
+FROM openjdk:8-jdk as build
 WORKDIR /app
 COPY . .
-RUN ls -l
-RUN ./gradlew assemble --no-daemon
-RUN cp build/libs/*.jar app.jar
+RUN ./gradlew assemble
 
+FROM openjdk:8-jre
+WORKDIR /app
+COPY --from=build /app/build/libs/*.jar app.jar
 CMD [ "java", "-jar", "app.jar"]
